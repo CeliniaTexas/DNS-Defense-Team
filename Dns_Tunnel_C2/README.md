@@ -13,12 +13,14 @@ README.md
 
 代码结构：
 dns_tunnel_c2/  
-├── server.py         # DNS 服务器 (C2)  
-├── client.py         # 客户端 (被控端)  
-├── crypto.py         # 加密模块  
-├── traffic_gen.py    # 流量生成模块  
-├── config.py         # 配置文件 (例如：根域名, AES 密钥)  
-└── README.md      # 说明文件  
+├── server.py              # DNS 服务器 (C2)  
+├── client.py              # 客户端 (被控端)  
+├── crypto.py              # 加密模块  
+├── traffic_gen.py         # 流量生成模块  
+├── config.py              # 配置文件 (例如：根域名, AES 密钥)  
+├── dns_feature_extract.py # DNS流量抓包与特征提取自动化脚本  
+├── feature_extractor.py   # DNS流量特征提取脚本  
+└── README.md              # 说明文件  
 
 使用方法：
 配置：
@@ -80,4 +82,8 @@ echo hello
 客户端在终端打印出：
 --- 命令输出 ---
 hello
+
+运行dns_feature_extract.py：对server.py和client.py产生的流量使用T-shark抓取指定时长的网络流量，保存为`sample.pcap`
+然后调用feature_extractor.py将pcap文件解析为csv格式，提取关心的字段（如时间戳、源/目的IP、查询域名、类型等）
+特征集经标准化后存入txt文件
 ----------------
