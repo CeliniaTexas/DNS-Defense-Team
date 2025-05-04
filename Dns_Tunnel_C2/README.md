@@ -83,7 +83,5 @@ echo hello
 --- 命令输出 ---
 hello
 
-运行dns_feature_extract.py：对server.py和client.py产生的流量使用T-shark抓取指定时长的网络流量，保存为`sample.pcap`
-然后调用feature_extractor.py将pcap文件解析为csv格式，提取关心的字段（如时间戳、源/目的IP、查询域名、类型等）
-特征集经标准化后存入txt文件
+
 ----------------
