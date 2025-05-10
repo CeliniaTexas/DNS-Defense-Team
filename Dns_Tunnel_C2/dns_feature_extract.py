@@ -10,12 +10,13 @@ CAPTURE_DURATION = 60  # 抓包时长（秒），可根据需要调整
 
 def capture_traffic(duration=60):
     print(f"开始抓包，持续 {duration} 秒...")
-    # 获取网卡编号（假设为1，可用`tshark -D`查看实际编号）
-    interface = "5"
+    interface = "5"  # 请根据实际网卡编号调整
+    # 只抓取UDP 53端口（DNS）流量
     cmd = [
         "tshark",
         "-i", interface,
         "-a", f"duration:{duration}",
+        "-f", "udp port 53",  # 仅抓取DNS流量
         "-w", PCAP_FILE
     ]
     subprocess.run(cmd, check=True)
