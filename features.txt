@@ -1,0 +1,11 @@
+domain,domain_len,is_numeric,qtype,entropy,depth,bias,query_freq_per_sec,req_resp_ratio,txt_usage_ratio,min_query_interval
+shuc-pc-hunt.ksord.com,22,0,1,3.6978,3,0.3636,2.5,2.0,0.0,0.0033
+shuc-pc-hunt.ksord.com,22,0,1,3.6978,3,0.3636,2.5,2.0,0.0,0.0033
+www.163.com,11,0,1,2.8454,3,0.4091,2.5,2.0,0.0,0.0041
+www.163.com,11,0,1,2.8454,3,0.4091,2.5,2.0,0.0,0.0041
+telemetry.individual.githubcopilot.com,38,0,1,4.0208,4,0.4737,2.5,2.0,0.0,0.0028
+telemetry.individual.githubcopilot.com,38,0,1,4.0208,4,0.4737,2.5,2.0,0.0,0.0028
+telemetry.individual.githubcopilot.com,38,0,1,4.0208,4,0.4737,2.5,2.0,0.0,0.0028
+telemetry.individual.githubcopilot.com,38,0,1,4.0208,4,0.4737,2.5,2.0,0.0,0.0028
+mobile.events.data.microsoft.com,32,0,1,3.8042,5,0.4375,2.5,2.0,0.0,0.0035
+mobile.events.data.microsoft.com,32,0,1,3.8042,5,0.4375,2.5,2.0,0.0,0.0035
