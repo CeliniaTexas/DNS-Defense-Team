@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 1. DNS隧道模拟与流量生成
 功能：基于Python dnslib库开发C2通信模拟工具
 通信方式：
@@ -29,3 +30,6 @@ TXT记录回传结果（AES加密，分段传输）
 一键运行脚本：run_all.py，串联全部流程
 环境依赖说明：requirements.txt
 详细README：包含背景、安装、使用、结果示例、免责声明
+=======
+# DNS-Defense-Team
+>>>>>>> acf774f85e1062905e5f90b9b3cbb1e810f2e208

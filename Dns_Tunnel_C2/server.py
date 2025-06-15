@@ -51,7 +51,11 @@ class DNSHandler(socketserver.BaseRequestHandler):
                         encrypted_result = cipher.encrypt(result.encode('utf-8'))  
 
                         # 按DNS TXT记录长度限制分段加密结果
+<<<<<<< HEAD
                         chunk_size = 180  # 每段最大180字节
+=======
+                        chunk_size = 200  # 每段最大200字节
+>>>>>>> acf774f85e1062905e5f90b9b3cbb1e810f2e208
                         chunks = [encrypted_result[i:i + chunk_size] for i in range(0, len(encrypted_result), chunk_size)]  
 
                         # 每段加密结果用Base64编码后放入TXT记录

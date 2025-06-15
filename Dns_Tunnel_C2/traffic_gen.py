@@ -33,7 +33,11 @@ def generate_tunnel_traffic(num_commands=10):
         "time /T",            # 显示当前时间
         "ipconfig",           # 查看IP配置
         "tasklist",           # 查看进程列表
+<<<<<<< HEAD
         #   "systeminfo"          # 查看系统信息，内容过多，会超时
+=======
+        "systeminfo"          # 查看系统信息
+>>>>>>> acf774f85e1062905e5f90b9b3cbb1e810f2e208
     ]  
 
     for _ in range(num_commands):  
