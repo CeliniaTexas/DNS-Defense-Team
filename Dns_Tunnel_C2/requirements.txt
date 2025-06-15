@@ -1,0 +1,6 @@
+dnslib
+pycryptodome
+scikit-learn
+pandas
+matplotlib
+joblib
