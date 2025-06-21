@@ -5,6 +5,11 @@ from sklearn.preprocessing import StandardScaler
 feature_file = 'features.txt'  # 或 'features.txt'，根据实际路径调整
 df = pd.read_csv(feature_file)
 
+# 过滤掉空行或异常行（如domain为空或全为NaN的行）
+df = df.dropna(subset=['domain'])           # domain为空的行
+df = df[df['domain'].astype(str).str.strip() != '']  # domain全空字符串的行
+df = df.dropna()                            # 其它字段有NaN的行
+
 # 选择需要标准化的特征列（排除domain等非数值列）
 feature_cols = [col for col in df.columns if col != 'domain']
 

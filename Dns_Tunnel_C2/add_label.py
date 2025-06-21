@@ -5,7 +5,7 @@ df = pd.read_csv('features_scaled.csv')  # 或 features.txt
 
 # 自动标注规则（根据你的C2域名调整）
 def label_rule(domain):
-    if 'myqcloud.com' in domain:  # 这里根据你的实验C2域名调整
+    if 'localtest.com' in domain:  # 这里根据你的实验C2域名调整
         return 1
     else:
         return 0
