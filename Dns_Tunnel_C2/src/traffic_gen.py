@@ -40,7 +40,7 @@ def generate_tunnel_traffic(num_commands=10):
         command = random.choice(commands)  
         print(f"发送模拟命令: {command}")  
         send_command(command)  
-        time.sleep(random.uniform(2, 5)) # 随机等待2~5秒，模拟真实流量间隔
+        time.sleep(random.uniform(1,2)) # 随机等待2~5秒，模拟真实流量间隔
 
 def generate_normal_dns_traffic(num_queries=20):  
     """生成模拟的正常DNS流量（负样本）"""  

@@ -39,7 +39,8 @@ def capture_traffic(duration=60):
 
     # 等待所有抓包进程结束
     for proc in procs:
-        proc.wait()    # 合并两个pcap文件为一个
+        proc.wait()   
+     # 合并两个pcap文件为一个
     print("正在合并pcap文件...")
     merge_cmd = ["mergecap", "-w", PCAP_FILE, "../data/sample_physical.pcap", "../data/sample_loopback.pcap"]
     subprocess.run(merge_cmd, check=True)

@@ -4,6 +4,8 @@
 import os
 import subprocess
 import sys
+import threading
+import time
 from paths import *
 
 def show_project_structure():
@@ -100,8 +102,185 @@ def run_full_pipeline():
     print("\n🎉 完整管道执行完毕！")
     return True
 
-def run_single_script(script_name):
+def run_server_async():
+    """异步运行DNS隧道服务器"""
+    script_path = os.path.join(SCRIPTS_DIR, "server.py")
+    if not os.path.exists(script_path):
+        print(f"❌ 脚本不存在: {script_path}")
+        return False
+    
+    print(f"🚀 启动DNS隧道服务器...")
+    print("💡 提示：服务器将在后台运行，按 Ctrl+C 可以停止")
+    print("💡 服务器启动后，您可以继续使用其他功能")
+    
+    original_dir = os.getcwd()
+    os.chdir(SCRIPTS_DIR)
+    
+    try:
+        # 使用subprocess.Popen启动服务器进程，不等待完成
+        process = subprocess.Popen(
+            [sys.executable, "server.py"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding='utf-8',
+            errors='ignore'
+        )
+        
+        print(f"✅ 服务器进程已启动 (PID: {process.pid})")
+        
+        # 等待一小段时间检查进程是否成功启动
+        time.sleep(2)
+        if process.poll() is None:
+            print("✅ 服务器正在运行中...")
+            return True
+        else:
+            stdout, stderr = process.communicate()
+            print("❌ 服务器启动失败:")
+            if stderr:
+                print(stderr)
+            return False
+            
+    except Exception as e:
+        print(f"❌ 启动服务器时出错: {e}")
+        return False
+    finally:
+        os.chdir(original_dir)
+
+def run_client_async():
+    """异步运行DNS隧道客户端"""
+    script_path = os.path.join(SCRIPTS_DIR, "client.py")
+    if not os.path.exists(script_path):
+        print(f"❌ 脚本不存在: {script_path}")
+        return False
+    
+    print(f"🚀 启动DNS隧道客户端...")
+    print("💡 提示：客户端将在后台运行")
+    
+    original_dir = os.getcwd()
+    os.chdir(SCRIPTS_DIR)
+    
+    try:
+        # 使用subprocess.Popen启动客户端进程，不等待完成
+        process = subprocess.Popen(
+            [sys.executable, "client.py"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding='utf-8',
+            errors='ignore'
+        )
+        
+        print(f"✅ 客户端进程已启动 (PID: {process.pid})")
+        
+        # 等待一小段时间检查进程是否成功启动
+        time.sleep(2)
+        if process.poll() is None:
+            print("✅ 客户端正在运行中...")
+            return True
+        else:
+            stdout, stderr = process.communicate()
+            if stdout:
+                print("输出:", stdout)
+            if stderr:
+                print("错误:", stderr)
+            return True  # 客户端可能执行完就退出，这是正常的
+            
+    except Exception as e:
+        print(f"❌ 启动客户端时出错: {e}")
+        return False
+    finally:
+        os.chdir(original_dir)
+
+def run_server_interactive():
+    """交互式运行DNS隧道服务器"""
+    script_path = os.path.join(SCRIPTS_DIR, "server.py")
+    if not os.path.exists(script_path):
+        print(f"❌ 脚本不存在: {script_path}")
+        return False
+    
+    print(f"🚀 启动DNS隧道服务器...")
+    print("💡 提示：服务器将显示实时输出，按 Ctrl+C 可以停止并返回菜单")
+    
+    original_dir = os.getcwd()
+    os.chdir(SCRIPTS_DIR)
+    
+    try:
+        # 使用实时输出方式运行服务器
+        process = subprocess.Popen(
+            [sys.executable, "server.py"],
+            text=True,
+            encoding='utf-8',
+            errors='ignore'
+        )
+        
+        print(f"✅ 服务器进程已启动 (PID: {process.pid})")
+        print("🔍 实时输出 (按 Ctrl+C 停止):")
+        print("-" * 50)
+        
+        try:
+            process.wait()  # 等待进程结束
+        except KeyboardInterrupt:
+            print("\n🛑 用户中断，正在停止服务器...")
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+            print("✅ 服务器已停止")
+        
+        return True
+            
+    except Exception as e:
+        print(f"❌ 启动服务器时出错: {e}")
+        return False
+    finally:
+        os.chdir(original_dir)
+
+def run_client_interactive():
+    """交互式运行DNS隧道客户端"""
+    script_path = os.path.join(SCRIPTS_DIR, "client.py")
+    if not os.path.exists(script_path):
+        print(f"❌ 脚本不存在: {script_path}")
+        return False
+    
+    print(f"🚀 启动DNS隧道客户端...")
+    print("💡 提示：客户端将显示实时输出")
+    
+    original_dir = os.getcwd()
+    os.chdir(SCRIPTS_DIR)
+    
+    try:
+        # 使用实时输出方式运行客户端
+        result = subprocess.run(
+            [sys.executable, "client.py"],
+            text=True,
+            encoding='utf-8',
+            errors='ignore'
+        )
+        
+        if result.returncode == 0:
+            print("✅ 客户端执行完成")
+        else:
+            print(f"❌ 客户端执行失败 (退出码: {result.returncode})")
+        
+        return result.returncode == 0
+            
+    except Exception as e:
+        print(f"❌ 启动客户端时出错: {e}")
+        return False
+    finally:
+        os.chdir(original_dir)
+
+def run_single_script(script_name, show_realtime=False):
     """运行单个脚本"""
+    # 对于服务器和客户端脚本，使用交互式方式运行
+    if script_name == "server.py":
+        return run_server_interactive()
+    elif script_name == "client.py":
+        return run_client_interactive()
+    
+    # 其他脚本根据参数选择运行方式
     script_path = os.path.join(SCRIPTS_DIR, script_name)
     if not os.path.exists(script_path):
         print(f"❌ 脚本不存在: {script_path}")
@@ -112,17 +291,32 @@ def run_single_script(script_name):
     os.chdir(SCRIPTS_DIR)
     
     try:
-        result = subprocess.run([sys.executable, script_name], 
-                               capture_output=True, text=True, encoding='utf-8', errors='ignore')
-        if result.returncode == 0:
-            print(f"✅ {script_name} 执行完成")
-            if result.stdout:
-                print("输出:")
-                print(result.stdout)
+        if show_realtime:
+            # 实时输出模式
+            print("🔍 实时输出:")
+            print("-" * 50)
+            result = subprocess.run([sys.executable, script_name], 
+                                   text=True, encoding='utf-8', errors='ignore')
+            print("-" * 50)
+            if result.returncode == 0:
+                print(f"✅ {script_name} 执行完成")
+            else:
+                print(f"❌ {script_name} 执行失败 (退出码: {result.returncode})")
         else:
-            print(f"❌ {script_name} 执行失败:")
-            if result.stderr:
-                print(result.stderr)
+            # 捕获输出模式
+            result = subprocess.run([sys.executable, script_name], 
+                                   capture_output=True, text=True, encoding='utf-8', errors='ignore')
+            if result.returncode == 0:
+                print(f"✅ {script_name} 执行完成")
+                if result.stdout:
+                    print("📄 输出:")
+                    print(result.stdout)
+            else:
+                print(f"❌ {script_name} 执行失败:")
+                if result.stderr:
+                    print("📄 错误信息:")
+                    print(result.stderr)
+        
         return result.returncode == 0
     except Exception as e:
         print(f"❌ 执行出错: {e}")
@@ -196,8 +390,9 @@ def main():
         print("7. 运行检测")
         print("8. 启动DNS隧道服务器")
         print("9. 启动DNS隧道客户端")
-        print("10. 清理数据文件")
-        print("11. 设置项目环境")
+        print("10. 运行完整数据处理管道")
+        print("11. 清理数据文件")
+        print("12. 设置项目环境")
         print("0. 退出")
         
         choice = input("\n请选择操作 (0-12): ").strip()
@@ -205,24 +400,26 @@ def main():
         if choice == "1":
             show_project_structure()
         elif choice == "2":
-            run_single_script("traffic_gen.py")
+            run_single_script("traffic_gen.py", True)
         elif choice == "3":
-            run_single_script("dns_feature_extract.py")
+            run_single_script("dns_feature_extract.py", True)
         elif choice == "4":
-            run_single_script("standardize_features.py")
+            run_single_script("standardize_features.py", True)
         elif choice == "5":
-            run_single_script("add_label.py")
+            run_single_script("add_label.py", True)
         elif choice == "6":
-            run_single_script("model_train.py")
+            run_single_script("model_train.py", True)
         elif choice == "7":
-            run_single_script("model_detect.py")
+            run_single_script("model_detect.py", True)
         elif choice == "8":
             run_single_script("server.py")
         elif choice == "9":
             run_single_script("client.py")
         elif choice == "10":
-            clean_data()
+            run_full_pipeline()
         elif choice == "11":
+            clean_data()
+        elif choice == "12":
             setup_environment()
         elif choice == "0":
             print("👋 再见！")
